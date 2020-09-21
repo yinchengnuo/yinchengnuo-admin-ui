@@ -1,4 +1,4 @@
-# zfcc-admin-ui 项目文档
+# yinchengnuo-admin-ui 项目文档
 ---
 
 本项目为使用 Vue 全家桶及 ElementUI 开发的 SPA。同时参考了多个成熟的企业级中后台产品解决方案，包括但不仅限于 vue-element-admin 、layUI 等。在结合这些方案的同时，对大部分主要功能进行了扩充和重构，不仅使得功能实现更为优雅，也更易维护和拓展。同时增加汇总了可配置项，并对演示部分和业务部分做了抽离，使得可以在此基础上快速优雅的搭建企业级中后台产品原型。并且本项目使用了最新的前端技术栈，内置了动态路由，权限验证等，同时保证了实用性和技术性。
@@ -11,10 +11,10 @@
 
 ```bash
 # 克隆项目
-git clone https://git.dev.every-xx.com/zfcc/zfcc-admin-ui
+git clone https://github.com/yinchengnuo/yinchengnuo-admin-ui
 
 # 进入项目目录
-cd zfcc-admin-ui
+cd yinchengnuo-admin-ui
 
 # 安装依赖
 npm install
@@ -97,7 +97,7 @@ npm run dev
 
 ![](https://panjiachen.gitee.io/gitee-cdn/vue-element-admin-site/7066d74f-12c5-47d6-b6ad-f22b43fec917.png)
 
-对应的代码在 layout 文件夹下。而 zfcc-admin-ui 中大部分页面都是基于这个 layout 的，除了个别页面如：login , 404, 401 等页面没有使用该 layout。如果你想在一个项目中有多种不同的 layout 也是很方便的，只要在一级路由那里选择不同的 layout 组件就行。
+对应的代码在 layout 文件夹下。而 yinchengnuo-admin-ui 中大部分页面都是基于这个 layout 的，除了个别页面如：login , 404, 401 等页面没有使用该 layout。如果你想在一个项目中有多种不同的 layout 也是很方便的，只要在一级路由那里选择不同的 layout 组件就行。
 
 ```js
 // 没有使用 layout
@@ -157,7 +157,7 @@ npm run dev
 ### 移动端
 ---
 
-zfcc-admin-ui 对自己的定位是桌面端后台框架，而且对于管理后台这种重交互的项目来说是不能通过简单的适配来满足桌面端和移动端两端不同的交互，所以真要做移动版后台，建议重新做一套系统。
+yinchengnuo-admin-ui 对自己的定位是桌面端后台框架，而且对于管理后台这种重交互的项目来说是不能通过简单的适配来满足桌面端和移动端两端不同的交互，所以真要做移动版后台，建议重新做一套系统。
 
 所以本项目也不会适配移动端，只是用 media query 做了一点简单的响应式布局，有需求请自行修改。
 
@@ -517,7 +517,7 @@ overflow-y: scroll;
 ### 目录结构
 ---
 
-zfcc-admin-ui 所有全局样式都在 **/src/styles** 下设置
+yinchengnuo-admin-ui 所有全局样式都在 **/src/styles** 下设置
 
 ```bash
 ├── styles
