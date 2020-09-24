@@ -8,5 +8,5 @@ module.exports = {
   errorLog: '*', // 错误日志打印环境
   publicPath: '/', // 部署路径
   whiteList: ['/login'], // 路由白名单
-  showUI: true // 是否显示示例 UI 模板页面
+  showUI: false // 是否显示示例 UI 模板页面
 }

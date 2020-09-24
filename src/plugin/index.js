@@ -1,16 +1,7 @@
 import './filter'
 import './prototype'
 import './directive'
-import G from './prototype/G'
-
-Vue.mixin({
-  created() {
-    G.$route = this.$route
-  },
-  activated() {
-    G.$route = this.$route
-  }
-})
+import './component'
 
 export default {
   install() {

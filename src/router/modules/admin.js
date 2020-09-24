@@ -1,9 +1,9 @@
 import Layout from '@/layout'
-import user from '@/api/admin/user'
-import role from '@/api/admin/role'
+// import user from '@/api/admin/user'
+// import role from '@/api/admin/role'
 
-console.log(Object.values(user))
-console.log(Object.values(role))
+// console.log(Object.values(user))
+// console.log(Object.values(role))
 
 export default {
   name: 'Admin',
@@ -15,7 +15,6 @@ export default {
     {
       path: 'user',
       name: 'AdminUser',
-      api: Object.values(user),
       meta: { title: '账号管理', noCache: true, icon: 'user' },
       component: () => import('@/views/admin/user')
     },
@@ -25,17 +24,17 @@ export default {
       meta: { title: '角色管理', noCache: true, icon: 'peoples' },
       component: () => import('@/views/admin/role')
     },
+    // {
+    //   path: 'post',
+    //   name: 'AdminPost',
+    //   meta: { title: '岗位管理', noCache: true, icon: 'form' },
+    //   component: () => import('@/views/admin/post')
+    // },
     {
       path: 'dept',
       name: 'AdminDept',
       meta: { title: '部门管理', noCache: true, icon: 'tree' },
       component: () => import('@/views/admin/dept')
-    },
-    {
-      path: 'post',
-      name: 'AdminPost',
-      meta: { title: '岗位管理', noCache: true, icon: 'form' },
-      component: () => import('@/views/admin/post')
     }
   ]
 }

@@ -4,7 +4,7 @@
     <el-table :data="list" border>
       <el-table-column align="center" width="234" prop="rolename" label="角色名" />
       <el-table-column align="center" label="权限">
-        <template slot-scope="{ row: { rolename, title, routes: tree }}">
+        <template #default="{ row: { rolename, title, routes: tree }}">
           <el-popover
             trigger="click"
             :title="rolename"
@@ -12,7 +12,7 @@
             popper-class="el-popover-tree"
           >
             <div class="tree-wrapper">
-              <el-tree :data="tree" :props="{ children: 'children', label: item => item.meta ? item.meta.title : '' }" :default-expand-all="true" />
+              <el-tree :data="generateRoutes(tree)" :props="{ children: 'children', label: item => item.meta ? item.meta.title : '' }" :default-expand-all="true" />
             </div>
             <div slot="reference" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor: pointer;">
               <el-tag v-for="(value, index) in title" :key="index" style="margin: 2px;">{{ value }}</el-tag>
@@ -49,6 +49,9 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <Page :total="page.total" :limit.sync="page.limit" />
+
     <el-dialog :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" :title="dialogType === 'add' ? '添加角色' : '编辑角色'">
       <el-form :model="role" label-width="80px" label-position="left">
         <el-form-item label="角色名">
@@ -93,11 +96,13 @@
         <el-button type="primary" @click="confirmRole">{{ dialogType === 'add' ? '确认添加' : '确认编辑' }}</el-button>
       </div>
     </el-dialog>
+
   </div>
 </template>
 
 <script>
 import path from 'path'
+import axios from 'axios'
 import { deepClone } from '@/utils'
 import { api_getRole, api_addRole, api_delRole, api_updateRole } from '@/api/admin/role'
 
@@ -107,6 +112,11 @@ export default {
     return {
       role: { id: '', rolename: '', routes: [], description: '' },
       list: [],
+      page: {
+        page: 1,
+        total: 0,
+        limit: 20
+      },
       dialogType: '',
       dialogVisible: false,
       buttonPermission: [],
@@ -114,6 +124,8 @@ export default {
     }
   },
   mounted() {
+    console.log(this.$store.state.permission.permissionRoutes)
+    axios.post('https://7ac0ddd0-32a2-4e95-90fb-304e8c832186.bspapp.com/http/logon/login?age=18', { test: 1 }).then(({ data }) => console.log(data))
     this.getRole(() => { // 传递函数进入等待渲染完毕如果从角色管理点击角色进入就触发响应权限点击显示预览权限树
       if (this.$route.params.rolename) {
         const index = this.list.findIndex(e => e.rolename === this.$route.params.rolename)
@@ -143,7 +155,8 @@ export default {
       )
     },
     getRole(popover) { // 获取角色方法
-      this.$request(api_getRole(), ({ list }) => {
+      this.$request(api_getRole({ page: this.page.page, limit: this.page.limit }), ({ total, list }) => {
+        this.page.total = total
         list.forEach(role => {
           this.reductionRoutes(role.routes, deepClone(this.$store.state.permission.permissionRoutes)) // 根据后端路由表还原前端路由
           role.title = JSON.stringify(role.routes).match(/(?<=title":").+?(?=")/g)
@@ -231,21 +244,24 @@ export default {
         }, { endStillLoading: true })
       })
     },
-    generateRoutes(routes, basePath = '/') { // 序列化路由
+    generateRoutes(routes, basePath = '/') { // 序列化路由 ！！！这里需要对比 root 路由表以清除失效权限
       const res = [] // 序列化后的路由表
       for (const route of routes) { // 遍历路由表
+        route.meta ? '' : route.meta = {}
         const data = {
           name: route.name,
-          meta: route.meta || {},
+          meta: route.meta,
+          title: route.meta.title,
           hidden: Boolean(route.hidden),
-          title: route.meta && route.meta.title,
           path: path.resolve(basePath, route.path),
           buttons: (route.buttons || []).map(button => ({ ...button, permission: Boolean(button.permission) }))
         }
         if (route.children) {
           data.children = this.generateRoutes(route.children, data.path)
         }
-        res.push(data)
+        if (data.name) {
+          res.push(data)
+        }
       }
       return res
     },

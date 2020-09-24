@@ -3,7 +3,8 @@ const user = require('./data/user')
 const dept = require('./data/dept')
 
 const USER = user
-const ROLE = role
+// const ROLE = role
+const ROLE = [...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role]
 const DEPT = dept
 
 module.exports = [
@@ -53,6 +54,7 @@ module.exports = [
       return {
         code: 200,
         data: {
+          total: ROLE.filter(e => e.level > role.level).length,
           list: ROLE.filter(e => e.level > role.level).map(role => ({
             ...role,
             users: USER.filter(user => role.roleID === user.roleID)

@@ -61,8 +61,6 @@ export default {
     .sun {
       width: 150px;
       height: 150px;
-      background: url("../../assets/solar_system_images/sun.png") no-repeat center center;
-      background-size: cover;
     }
     .orbit-wrapper {
       top: 0;

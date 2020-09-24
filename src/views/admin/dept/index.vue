@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <el-input v-model="filterText" placeholder="输入部门名称进行过滤" maxlength="24" style="margin-bottom: 8px; width: 240px;" />
     <div class="custom-table border">
       <header class="header bt bl">
         <div class="item br bb">部门</div>
@@ -14,6 +15,7 @@
         draggable
         :data="tree"
         :default-expand-all="true"
+        :filter-node-method="filterNode"
         @node-drop="treeDrop"
       >
         <template #default="{ node, data }">
@@ -61,7 +63,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialog.visible = false">取 消</el-button>
-        <el-button type="primary" @click="dialog.comfirm($refs)">确 定</el-button>
+        <el-button type="primary" @click="dialog.comfirm($refs, tree)">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -75,38 +77,39 @@ export default {
   props: {},
   data() {
     return {
+      filterText: '',
       dialog: {
         title: '',
         node: null,
         visible: false,
         refName: 'dialogFrom',
-        data: { label: '', status: '', leader: '', phone: '' },
+        data: { id: '', label: '', status: '', leader: '', phone: '' },
         show(node, edit) {
           this.node = node
           if (edit) {
             this.title = '修改部门信息'
             Object.assign(this.data, edit)
           } else {
-            this.title = `新增子部门（${ node.data.label }）`
+            this.title = `新增子部门（${node.data.label}）`
             Object.assign(this.data, { label: '', status: '1', leader: '', phone: '' })
           }
           this.visible = true
         },
-        comfirm($refs) {
+        comfirm($refs, tree) {
           $refs[this.refName].validate(valid => {
             if (valid) {
               if (this.title === '新增子部门') {
                 if (this.node.data.children) {
-                  this.node.data.children.push(this.data)
+                  this.node.data.children.push({ ...this.data, id: Date.now() })
                 } else {
-                  this.node.data.children = [this.data]
+                  this.node.data.children = [{ ...this.data, id: Date.now() }]
                 }
-                G.$request(api_updateDept({ tree: this.node.data }), () => {
+                G.$request(api_updateDept({ tree: this.node.store.root.data[0] }), () => {
                   this.visible = false
                 })
               } else {
                 Object.assign(this.node.data, this.data)
-                G.$request(api_updateDept({ tree: this.node.data }), () => {
+                G.$request(api_updateDept({ tree: this.node.store.root.data[0] }), () => {
                   this.visible = false
                 })
               }
@@ -127,25 +130,33 @@ export default {
           ]
         }
       },
-      tree: []
+      tree: [],
+      treeC: []
     }
   },
-  computed: {},
-  created() {},
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val)
+    }
+  },
   mounted() {
     this.getTree()
   },
   methods: {
+    filterNode(value, data) {
+      if (!value) return true
+      return data.label.indexOf(value) !== -1
+    },
     getTree() {
       this.$request(api_getDept(), tree => {
-        this.tree = tree
+        this.tree = this.treeC = tree
       })
     },
     treeDrop() {
       G.$request(api_updateDept({ tree: this.tree[0] }))
     },
     delTree(node) {
-      this.$confirm('确定要删除当前角色？', '确定操作', { type: 'warning' }).then(() => {
+      this.$confirm(`确定要删除${node.label}？`, '确定操作', { type: 'warning' }).then(() => {
         node.parent.data.children.splice(node.parent.data.children.indexOf(node.data), 1)
         G.$request(api_updateDept({ tree: this.tree[0] }))
       })
