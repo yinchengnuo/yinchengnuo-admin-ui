@@ -8,15 +8,22 @@ module.exports = [
   },
   {
     level: 1,
-    routes: JSON.parse('[{"path":"/pages","children":[{"path":"charts","children":[{"path":"keyboard"},{"path":"line"},{"path":"mix-chart"}]},{"path":"table","children":[{"path":"complex-table"},{"path":"dynamic-table"},{"path":"drag-table"},{"path":"inline-edit-table"}]},{"path":"excel","children":[{"path":"export-excel"},{"path":"export-selected-excel"},{"path":"export-merge-header"},{"path":"upload-excel"}]},{"path":"example","children":[{"path":"list"},{"path":"create"},{"path":"edit/:id"}]},{"path":"zip","children":[{"path":"download"}]},{"path":"tab","children":[{"path":""}]},{"path":"error-log"}]},{"path":"/components","children":[{"path":"icon"},{"path":"button-auth","buttons":["add","edit","search"]},{"path":"editor","children":[{"path":"rich-text"},{"path":"markdown"},{"path":"json"}]},{"path":"clipboard"},{"path":"split-pane"},{"path":"avatar-upload"},{"path":"sticky"},{"path":"count-to"},{"path":"mixin"},{"path":"back-to-top"},{"path":"drag-dialog"},{"path":"dropzone"},{"path":"drag-tags"},{"path":"dnd-list"},{"path":"drag-kanban"}]},{"path":"/admin","children":[{"path":"role"},{"path":"user"}]}]'),
+    routes: [],
     roleID: '1',
+    rolename: '总经理',
+    description: '拥有最高权限'
+  },
+  {
+    level: 2,
+    routes: JSON.parse('[{"path":"/pages","children":[{"path":"charts","children":[{"path":"keyboard"},{"path":"line"},{"path":"mix-chart"}]},{"path":"table","children":[{"path":"complex-table"},{"path":"dynamic-table"},{"path":"drag-table"},{"path":"inline-edit-table"}]},{"path":"excel","children":[{"path":"export-excel"},{"path":"export-selected-excel"},{"path":"export-merge-header"},{"path":"upload-excel"}]},{"path":"example","children":[{"path":"list"},{"path":"create"},{"path":"edit/:id"}]},{"path":"zip","children":[{"path":"download"}]},{"path":"tab","children":[{"path":""}]},{"path":"error-log"}]},{"path":"/components","children":[{"path":"icon"},{"path":"button-auth","buttons":["add","edit","search"]},{"path":"editor","children":[{"path":"rich-text"},{"path":"markdown"},{"path":"json"}]},{"path":"clipboard"},{"path":"split-pane"},{"path":"avatar-upload"},{"path":"sticky"},{"path":"count-to"},{"path":"mixin"},{"path":"back-to-top"},{"path":"drag-dialog"},{"path":"dropzone"},{"path":"drag-tags"},{"path":"dnd-list"},{"path":"drag-kanban"}]},{"path":"/admin","children":[{"path":"role"},{"path":"user"}]}]'),
+    roleID: '2',
     rolename: '技术总监',
     description: '负责技术管理体系的建设和维护，对技术和业务具有深入理解，对行业技术发展趋势和管理现状具有准确的判断。'
   },
   {
-    level: 1,
+    level: 2,
     routes: JSON.parse('[{"path":"/components","children":[{"path":"icon"},{"path":"button-auth","buttons":["add","edit","search"]},{"path":"editor","children":[{"path":"rich-text"},{"path":"markdown"},{"path":"json"}]},{"path":"clipboard"},{"path":"split-pane"},{"path":"avatar-upload"},{"path":"sticky"},{"path":"count-to"},{"path":"mixin"},{"path":"back-to-top"},{"path":"drag-dialog"},{"path":"dropzone"},{"path":"drag-tags"},{"path":"dnd-list"},{"path":"drag-kanban"}]},{"path":"/admin","children":[{"path":"role"},{"path":"user"}]}]'),
-    roleID: '2',
+    roleID: '3',
     rolename: '运营总监',
     description: '计划、指导或协调公司或公共和私营机构的运营活动。职责包括制定政策、管理日常活动、对物资和人力资源使用进行计划。包括负责日常管理工作的小商业机构的业主或经理。'
   }

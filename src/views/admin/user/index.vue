@@ -1,62 +1,84 @@
 <template>
   <div class="PageAccountManage">
-    <el-button type="primary" style="margin-bottom: 8px;" @click="handleAddAccount">添加账号</el-button>
+    <div class="left">
+      <el-input
+        v-model="filterText"
+        size="mini"
+        placeholder="输入部门名称进行过滤"
+      />
 
-    <el-table :data="list" border>
-      <el-table-column align="center" prop="avatar" label="头像">
-        <template #default="{ row: { avatar, username } }">
-          <img class="avatar" :src="avatar" :alt="username">
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="username" label="名称" />
-      <el-table-column align="center" prop="introduction" label="介绍" />
-      <el-table-column align="center" prop="rolename" label="角色">
-        <template #default="{ row: { rolename }}">
-          <router-link :to="{ name: 'AdminRole', params: { rolename }}">
-            <el-link type="primary">{{ rolename }}</el-link>
-          </router-link>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="操作">
-        <template slot-scope="scope">
-          <el-button type="primary" :disabled="scope.row.role === 'root'" @click="handleEditAccount(scope.row)">修改账号信息</el-button>
-          <el-button v-if="$store.state.user.role === 'root'" type="danger" :disabled="scope.row.role === 'root'" @click="handleDeleteAccount(scope.row)">删除账号</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+      <el-tree
+        ref="tree"
+        class="filter-tree"
+        :data="tree"
+        :props="defaultProps"
+        default-expand-all
+        :filter-node-method="filterNode"
+      />
+    </div>
+    <div class="right">
+      <el-button type="primary" style="margin-bottom: 8px;" size="mini" @click="handleAddAccount">添加账号</el-button>
 
-    <el-dialog width="321px" :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" :title="dialogType === 'add' ? '添加账号' : '编辑账号'">
-      <el-form :model="account" label-width="48px" label-position="left">
-        <div style="text-align: center;margin-bottom: 24px;">
-          <el-avatar v-img.base64="([avatar]) => account.avatar = avatar" :size="66" :src="account.avatar" />
+      <el-table :data="list" border>
+        <el-table-column align="center" prop="avatar" label="头像">
+          <template #default="{ row: { avatar, username } }">
+            <img class="avatar" :src="avatar" :alt="username">
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="username" label="名称" />
+        <el-table-column align="center" prop="introduction" label="介绍" />
+        <el-table-column align="center" prop="rolename" label="角色">
+          <template #default="{ row: { rolename }}">
+            <router-link :to="{ name: 'AdminRole', params: { rolename }}">
+              <el-link type="primary">{{ rolename }}</el-link>
+            </router-link>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作">
+          <template slot-scope="scope">
+            <el-button type="primary" :disabled="scope.row.role === 'root'" @click="handleEditAccount(scope.row)">修改账号信息</el-button>
+            <el-button v-if="$store.state.user.role === 'root'" type="danger" :disabled="scope.row.role === 'root'" @click="handleDeleteAccount(scope.row)">删除账号</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <Pagination :total="page.total" :limit="page.limit" @pagination="pagination" />
+
+      <el-dialog width="321px" :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" :title="dialogType === 'add' ? '添加账号' : '编辑账号'">
+        <el-form :model="account" label-width="48px" label-position="left">
+          <div style="text-align: center;margin-bottom: 24px;">
+            <el-avatar v-img.base64="([avatar]) => account.avatar = avatar" :size="66" :src="account.avatar" />
+          </div>
+          <el-form-item label="名称">
+            <el-input v-model="account.username" maxlength="12" placeholder="名称" />
+          </el-form-item>
+          <el-form-item v-if="dialogType === 'add'" label="密码">
+            <el-input v-model="account.password" maxlength="16" placeholder="密码" />
+            <el-button type="primary" size="mini" @click="account.password = Date.now()">生成</el-button>
+            <el-button type="primary" size="mini" @click="$copy(account.password)">复制</el-button>
+          </el-form-item>
+          <el-form-item label="简介">
+            <el-input v-model="account.introduction" type="textarea" maxlength="48" placeholder="简介" />
+          </el-form-item>
+          <el-form-item label="角色">
+            <el-select v-model="account.rolename" placeholder="请选择角色">
+              <el-option v-for="(item, index) in roleNameList" :key="index" :label="item.rolename" :value="item.rolename" />
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div style="text-align:right;">
+          <el-button type="danger" @click="dialogVisible=false">取消</el-button>
+          <el-button type="primary" @click="confirmAccount">确定</el-button>
         </div>
-        <el-form-item label="名称">
-          <el-input v-model="account.username" maxlength="12" placeholder="名称" />
-        </el-form-item>
-        <el-form-item v-if="dialogType === 'add'" label="密码">
-          <el-input v-model="account.password" maxlength="16" placeholder="密码" />
-          <el-button type="primary" size="mini" @click="account.password = Date.now()">生成</el-button>
-          <el-button type="primary" size="mini" @click="$copy(account.password)">复制</el-button>
-        </el-form-item>
-        <el-form-item label="简介">
-          <el-input v-model="account.introduction" type="textarea" maxlength="48" placeholder="简介" />
-        </el-form-item>
-        <el-form-item label="角色">
-          <el-select v-model="account.rolename" placeholder="请选择角色">
-            <el-option v-for="(item, index) in roleNameList" :key="index" :label="item.rolename" :value="item.rolename" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-      <div style="text-align:right;">
-        <el-button type="danger" @click="dialogVisible=false">取消</el-button>
-        <el-button type="primary" @click="confirmAccount">确定</el-button>
-      </div>
-    </el-dialog>
+      </el-dialog>
+    </div>
+
   </div>
 </template>
 
 <script>
 import avatar from './avatar'
+import { api_getDept } from '@/api/admin/dept'
 import { api_getRole } from '@/api/admin/role'
 import { api_getAcc, api_delAcc, api_addAcc, api_updateAcc } from '@/api/admin/user'
 const account = { userID: '', avatar, password: '', username: '', introduction: '', rolename: '' }
@@ -66,10 +88,29 @@ export default {
   data() {
     return {
       account,
+      tree: [],
+      filterText: '',
       list: [],
       roleList: [],
       dialogType: '',
-      dialogVisible: false
+      dialogVisible: false,
+      page: {
+        page: 1,
+        total: 0,
+        limit: 10
+      },
+      rules: {
+        label: [
+          { required: true, message: '请输入部门名称', trigger: 'blur' }
+        ],
+        leader: [
+          { required: true, message: '请输入部门负责人', trigger: 'blur' }
+        ],
+        phone: [
+          { required: true, message: '请输入部门联系方式', trigger: 'blur' },
+          { min: 11, max: 11, message: '请输入手机号', trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -77,10 +118,22 @@ export default {
       return this.roleList.map(e => ({ rolename: e.rolename, roleID: e.roleID }))
     }
   },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val)
+    }
+  },
   mounted() {
     this.getAccountRole() // 获取所有账号和角色
+    this.$request(api_getDept(), tree => {
+      this.tree = tree
+    })
   },
   methods: {
+    filterNode(value, data) {
+      if (!value) return true
+      return data.label.indexOf(value) !== -1
+    },
     getAccountRole() { // 获取所有账户和角色
       this.$request([api_getAcc(), api_getRole()], ([data1, data2]) => {
         this.list = data1.list
@@ -131,27 +184,33 @@ export default {
 <style lang="scss" scoped>
   .PageAccountManage {
     padding: 8px;
+    @include flex();
     box-sizing: border-box;
-    .el-input {
-      // width: 180px;
+    align-items: flex-start;
+    .left {
+      width: 222px;
+      margin-right: 8px;
     }
-    .el-table {
-      ::v-deep {
-        .cell {
-          overflow: visible;
+    .right {
+      flex: 1;
+      .el-table {
+        ::v-deep {
+          .cell {
+            overflow: visible;
+          }
         }
       }
-    }
-    .avatar {
-      width: 36px;
-      z-index: 999;
-      height: 36px;
-      position: relative;
-      border-radius: 8px;
-      transition: transform .5s;
-    }
-    .avatar:hover {
-      transform: scale(1.5, 1.5)
+      .avatar {
+        width: 36px;
+        z-index: 999;
+        height: 36px;
+        position: relative;
+        border-radius: 8px;
+        transition: transform .5s;
+      }
+      .avatar:hover {
+        transform: scale(1.5, 1.5)
+      }
     }
   }
 </style>

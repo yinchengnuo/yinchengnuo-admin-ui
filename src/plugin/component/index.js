@@ -1,3 +1,3 @@
 import Pagination from '@/components/Pagination'
 
-Vue.component('Page', Pagination)
+Vue.component('Pagination', Pagination)

@@ -6,7 +6,6 @@
         <div class="item br bb">部门</div>
         <div class="item br bb">负责人</div>
         <div class="item br bb">联系方式</div>
-        <div class="item br bb">状态</div>
         <div class="item br bb">操作</div>
       </header>
       <el-tree
@@ -25,11 +24,10 @@
             </div>
             <div class="item br bb">{{ data.leader }}</div>
             <div class="item br bb">{{ data.phone }}</div>
-            <div class="item br bb">{{ data.status == 1 ? '正常' : '停用' }}</div>
             <div class="item br bb" @click.stop="">
               <template>
                 <el-button type="text" icon="el-icon-edit" @click="dialog.show(node, data)">修改</el-button>
-                <el-button type="text" icon="el-icon-plus" @click="dialog.show(node)">添加</el-button>
+                <el-button type="text" icon="el-icon-plus" @click="dialog.show(node)">添加子部门</el-button>
                 <el-button type="text" icon="el-icon-delete" @click="delTree(node)">删除</el-button>
               </template>
             </div>
@@ -38,27 +36,20 @@
       </el-tree>
     </div>
 
-    <el-dialog width="654px" :title="dialog.title" :visible.sync="dialog.visible" :destroy-on-close="true">
+    <el-dialog width="456px" :title="dialog.title" :visible.sync="dialog.visible" :destroy-on-close="true">
       <el-form
         :ref="dialog.refName"
         :model="dialog.data"
-        inline
         :rules="dialog.rules"
       >
-        <el-form-item label="部门名称" prop="label">
+        <el-form-item label="部门名称" prop="label" label-width="98px">
           <el-input v-model="dialog.data.label" placeholder="请输入部门名称" />
         </el-form-item>
-        <el-form-item label="部门负责人" prop="leader" label-width="123px">
+        <el-form-item label="部门负责人" prop="leader" label-width="98px">
           <el-input v-model="dialog.data.leader" placeholder="请输入部门负责人" />
         </el-form-item>
-        <el-form-item label="联系方式" prop="phone">
+        <el-form-item label="联系方式" prop="phone" label-width="98px">
           <el-input v-model="dialog.data.phone" placeholder="请输入部门联系方式" maxlength="11" />
-        </el-form-item>
-        <el-form-item label="部门状态" label-width="123px">
-          <el-select v-model="dialog.data.status" placeholder="请选择部门状态">
-            <el-option label="正常" value="1" />
-            <el-option label="停用" value="2" />
-          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -83,7 +74,7 @@ export default {
         node: null,
         visible: false,
         refName: 'dialogFrom',
-        data: { id: '', label: '', status: '', leader: '', phone: '' },
+        data: { id: '', label: '', leader: '', phone: '' },
         show(node, edit) {
           this.node = node
           if (edit) {

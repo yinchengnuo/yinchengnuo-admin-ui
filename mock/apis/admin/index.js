@@ -3,8 +3,7 @@ const user = require('./data/user')
 const dept = require('./data/dept')
 
 const USER = user
-// const ROLE = role
-const ROLE = [...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role, ...role]
+const ROLE = role
 const DEPT = dept
 
 module.exports = [
@@ -48,14 +47,17 @@ module.exports = [
   {
     url: '/admin/role/all', // 获取角色列表
     type: 'get',
-    response: ({ query: { token }}) => {
+    response: ({ query: { token, page, limit }}) => {
+      page = +page
+      limit = +limit
       const user = USER.find(e => e.username === decodeURIComponent(token)) // 根据 username 查询用户
       const role = ROLE.find(e => e.roleID === user.roleID) // 根据 roleID 获取角色信息
+      const list = ROLE.filter(e => e.level > role.level)
       return {
         code: 200,
         data: {
-          total: ROLE.filter(e => e.level > role.level).length,
-          list: ROLE.filter(e => e.level > role.level).map(role => ({
+          total: list.length,
+          list: list.slice((page - 1) * limit, (page - 1) * limit + limit).map(role => ({
             ...role,
             users: USER.filter(user => role.roleID === user.roleID)
           })) // 取出当前角色表中等级低于自身的角色

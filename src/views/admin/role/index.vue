@@ -1,6 +1,6 @@
 <template>
   <div class="PageRoleManage">
-    <el-button type="primary" style="margin-bottom: 8px;" @click="handleAddRole">添加角色</el-button>
+    <el-button type="primary" style="margin-bottom: 8px;" size="mini" @click="handleAddRole">添加角色</el-button>
     <el-table :data="list" border>
       <el-table-column align="center" width="234" prop="rolename" label="角色名" />
       <el-table-column align="center" label="权限">
@@ -50,7 +50,7 @@
       </el-table-column>
     </el-table>
 
-    <Page :total="page.total" :limit.sync="page.limit" />
+    <Pagination :total="page.total" :limit="page.limit" @pagination="pagination" />
 
     <el-dialog :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" :title="dialogType === 'add' ? '添加角色' : '编辑角色'">
       <el-form :model="role" label-width="80px" label-position="left">
@@ -115,7 +115,7 @@ export default {
       page: {
         page: 1,
         total: 0,
-        limit: 20
+        limit: 10
       },
       dialogType: '',
       dialogVisible: false,
@@ -124,7 +124,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$store.state.permission.permissionRoutes)
     axios.post('https://7ac0ddd0-32a2-4e95-90fb-304e8c832186.bspapp.com/http/logon/login?age=18', { test: 1 }).then(({ data }) => console.log(data))
     this.getRole(() => { // 传递函数进入等待渲染完毕如果从角色管理点击角色进入就触发响应权限点击显示预览权限树
       if (this.$route.params.rolename) {
@@ -138,6 +137,11 @@ export default {
     }) // 获取所有角色
   },
   methods: {
+    pagination({ page, limit }) {
+      this.page.page = page
+      this.page.limit = limit
+      this.getRole()
+    },
     renderContent(h, { node, data: { meta, hidden, buttons }}) { // 自定义 tree 选项
       const style = 'color: red;margin-left: 8px;font-style: oblique;font-size: 8px;font-weight: bold;'
       return (
