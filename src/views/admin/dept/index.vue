@@ -165,7 +165,7 @@ export default {
     .bb { border-bottom: 1px solid #ebeef5; }
     .custom-table {
       .header {
-        height: 56px;
+        height: 48px;
         @include flex();
         .item {
           flex: 1;
@@ -179,7 +179,7 @@ export default {
       ::v-deep {
         .el-tree {
           .el-tree-node__content {
-            height: 45px;
+            height: 42px;
             position: relative;
             .el-tree-node__expand-icon {
               font-size: 24px;

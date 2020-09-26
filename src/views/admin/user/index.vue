@@ -11,9 +11,10 @@
         ref="tree"
         class="filter-tree"
         :data="tree"
-        :props="defaultProps"
         default-expand-all
+        :expand-on-click-node="false"
         :filter-node-method="filterNode"
+        @node-click="switchDept"
       />
     </div>
     <div class="right">
@@ -124,12 +125,19 @@ export default {
     }
   },
   mounted() {
-    this.getAccountRole() // 获取所有账号和角色
     this.$request(api_getDept(), tree => {
       this.tree = tree
+      console.log(tree)
+      this.getAccountRole() // 获取所有账号和角色
     })
   },
   methods: {
+    switchDept({ id }) {
+      console.log(id)
+    },
+    pagination() {
+      console.log(123)
+    },
     filterNode(value, data) {
       if (!value) return true
       return data.label.indexOf(value) !== -1

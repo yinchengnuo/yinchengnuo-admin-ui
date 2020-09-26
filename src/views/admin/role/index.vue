@@ -50,8 +50,6 @@
       </el-table-column>
     </el-table>
 
-    <Pagination :total="page.total" :limit="page.limit" @pagination="pagination" />
-
     <el-dialog :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" :title="dialogType === 'add' ? '添加角色' : '编辑角色'">
       <el-form :model="role" label-width="80px" label-position="left">
         <el-form-item label="角色名">
@@ -88,7 +86,7 @@
           </el-form-item>
         </div>
         <el-form-item label="角色描述">
-          <el-input v-model="role.description" type="textarea" :rows="2" placeholder="请输入角色描述" />
+          <el-input v-model="role.description" type="textarea" maxlength="20" show-word-limit placeholder="请输入角色描述" />
         </el-form-item>
       </el-form>
       <div slot="footer">
@@ -112,11 +110,6 @@ export default {
     return {
       role: { id: '', rolename: '', routes: [], description: '' },
       list: [],
-      page: {
-        page: 1,
-        total: 0,
-        limit: 10
-      },
       dialogType: '',
       dialogVisible: false,
       buttonPermission: [],
@@ -137,11 +130,6 @@ export default {
     }) // 获取所有角色
   },
   methods: {
-    pagination({ page, limit }) {
-      this.page.page = page
-      this.page.limit = limit
-      this.getRole()
-    },
     renderContent(h, { node, data: { meta, hidden, buttons }}) { // 自定义 tree 选项
       const style = 'color: red;margin-left: 8px;font-style: oblique;font-size: 8px;font-weight: bold;'
       return (
@@ -159,8 +147,7 @@ export default {
       )
     },
     getRole(popover) { // 获取角色方法
-      this.$request(api_getRole({ page: this.page.page, limit: this.page.limit }), ({ total, list }) => {
-        this.page.total = total
+      this.$request(api_getRole(), ({ list }) => {
         list.forEach(role => {
           this.reductionRoutes(role.routes, deepClone(this.$store.state.permission.permissionRoutes)) // 根据后端路由表还原前端路由
           role.title = JSON.stringify(role.routes).match(/(?<=title":").+?(?=")/g)
