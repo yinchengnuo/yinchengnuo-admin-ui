@@ -6,7 +6,7 @@ module.exports = [
     createID: '', // 创建人 ID
     rolename: 'root', // 角色名 （root 角色角色名不可更改，同时不会在前端出现）
     description: '拥有最高权限' // 角色描述
-  },
+  }
   // {
   //   roleID: '1',
   //   createID: '0',
