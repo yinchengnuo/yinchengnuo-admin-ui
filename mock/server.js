@@ -20,8 +20,8 @@ function registerRoutes(app) {
 }
 
 module.exports = app => { // 导出 devServer before 处理
-  app.use(bodyParser.json()) // 添加 express 请求体解析中间件
-  app.use(bodyParser.urlencoded({ extended: true })) // 不使用 application/x-www-form-urlencoded 解析
+  app.use(bodyParser.json({ limit: '50mb' })) // 添加 express 请求体解析中间件
+  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true })) // 不使用 application/x-www-form-urlencoded 解析
 
   const mockRoutes = registerRoutes(app) // 为 devServer 注册路由
   let mockStartIndex = mockRoutes.mockStartIndex // 保存当前 devServer 注册路由的数量

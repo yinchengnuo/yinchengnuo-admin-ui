@@ -2,7 +2,7 @@
   <div class="PageAccountManage">
     <div class="left">
       <el-input
-        v-model="filterText"
+        v-model.trim="filterText"
         size="mini"
         placeholder="输入部门名称进行过滤"
       />
@@ -27,7 +27,7 @@
           </template>
         </el-table-column>
         <el-table-column align="center" prop="username" label="名称" />
-        <el-table-column align="center" prop="introduction" label="介绍" />
+        <el-table-column align="center" prop="deptname" label="部门" />
         <el-table-column align="center" prop="rolename" label="角色">
           <template #default="{ row: { rolename }}">
             <router-link :to="{ name: 'AdminRole', params: { rolename }}">
@@ -35,35 +35,43 @@
             </router-link>
           </template>
         </el-table-column>
+        <el-table-column align="center" prop="createname" label="创建人" />
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
-            <el-button type="primary" :disabled="scope.row.role === 'root'" @click="handleEditAccount(scope.row)">修改账号信息</el-button>
-            <el-button v-if="$store.state.user.role === 'root'" type="danger" :disabled="scope.row.role === 'root'" @click="handleDeleteAccount(scope.row)">删除账号</el-button>
+            <el-button type="primary" size="mini" @click="handleEditAccount(scope.row)">修改账号信息</el-button>
+            <el-button type="danger" size="mini" @click="handleDeleteAccount(scope.row)">删除账号</el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <Pagination :total="page.total" :limit="page.limit" @pagination="pagination" />
 
-      <el-dialog width="321px" :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" :title="dialogType === 'add' ? '添加账号' : '编辑账号'">
-        <el-form :model="account" label-width="48px" label-position="left">
+      <el-dialog width="666px" :visible.sync="dialogVisible" :destroy-on-close="true" :title="dialogType === 'add' ? '添加账号' : '编辑账号'">
+        <el-form ref="dialog-form" :model="account" label-width="88px" label-position="left" inline :rules="rules">
           <div style="text-align: center;margin-bottom: 24px;">
             <el-avatar v-img.base64="([avatar]) => account.avatar = avatar" :size="66" :src="account.avatar" />
+            <div>点击头像选择</div>
           </div>
-          <el-form-item label="名称">
-            <el-input v-model="account.username" maxlength="12" placeholder="名称" />
+          <el-form-item label="用户名称" prop="username">
+            <el-input v-model.trim="account.username" maxlength="12" placeholder="请输入用户名称" />
           </el-form-item>
-          <el-form-item v-if="dialogType === 'add'" label="密码">
-            <el-input v-model="account.password" maxlength="16" placeholder="密码" />
-            <el-button type="primary" size="mini" @click="account.password = Date.now()">生成</el-button>
-            <el-button type="primary" size="mini" @click="$copy(account.password)">复制</el-button>
+          <el-form-item label="归属部门" prop="deptID">
+            <treeselect
+              v-model.trim="account.deptID"
+              :options="tree"
+              :show-count="true"
+              :disable-branch-nodes="true"
+              placeholder="请选择归属部门"
+              style="width: 200px"
+              @select="({ label }) => account.deptname = label"
+            />
           </el-form-item>
-          <el-form-item label="简介">
-            <el-input v-model="account.introduction" type="textarea" maxlength="48" placeholder="简介" />
+          <el-form-item label="用户密码" prop="password">
+            <el-input v-model.trim="account.password" maxlength="16" type="password" show-password placeholder="请输入用户密码" style="width: 185px" />
           </el-form-item>
-          <el-form-item label="角色">
-            <el-select v-model="account.rolename" placeholder="请选择角色">
-              <el-option v-for="(item, index) in roleNameList" :key="index" :label="item.rolename" :value="item.rolename" />
+          <el-form-item label="用户角色" prop="roleID">
+            <el-select v-model.trim="account.roleID" placeholder="请选择用户角色">
+              <el-option v-for="(item, index) in roleList" :key="index" :label="item.rolename" :value="item.roleID" />
             </el-select>
           </el-form-item>
         </el-form>
@@ -81,10 +89,21 @@
 import avatar from './avatar'
 import { api_getDept } from '@/api/admin/dept'
 import { api_getRole } from '@/api/admin/role'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { api_getAcc, api_delAcc, api_addAcc, api_updateAcc } from '@/api/admin/user'
-const account = { userID: '', avatar, password: '', username: '', introduction: '', rolename: '' }
+const account = {
+  avatar,
+  userID: '',
+  roleID: '',
+  deptID: null,
+  deptname: '',
+  password: '',
+  username: ''
+}
 export default {
   name: 'PageAccountManage',
+  components: { Treeselect },
   props: {},
   data() {
     return {
@@ -95,55 +114,53 @@ export default {
       roleList: [],
       dialogType: '',
       dialogVisible: false,
+      deptID: '1',
       page: {
         page: 1,
         total: 0,
-        limit: 10
+        limit: 20
       },
       rules: {
-        label: [
-          { required: true, message: '请输入部门名称', trigger: 'blur' }
+        username: [
+          { required: true, message: '请输入用户名称', trigger: 'blur' }
         ],
-        leader: [
-          { required: true, message: '请输入部门负责人', trigger: 'blur' }
+        deptID: [
+          { required: true, message: '请选择归属部门', trigger: 'blur' }
         ],
-        phone: [
-          { required: true, message: '请输入部门联系方式', trigger: 'blur' },
-          { min: 11, max: 11, message: '请输入手机号', trigger: 'blur' }
+        password: [
+          { required: true, message: '请输入用户密码', trigger: 'blur' }
+        ],
+        roleID: [
+          { required: true, message: '请选择用户角色', trigger: 'blur' }
         ]
       }
     }
   },
-  computed: {
-    roleNameList() {
-      return this.roleList.map(e => ({ rolename: e.rolename, roleID: e.roleID }))
-    }
-  },
   watch: {
-    filterText(val) {
+    filterText(val) { // 过滤部门 tree 关键词
       this.$refs.tree.filter(val)
     }
   },
   mounted() {
-    this.$request(api_getDept(), tree => {
+    this.$request(api_getDept(), tree => { // 获取部门 tree
       this.tree = tree
-      console.log(tree)
-      this.getAccountRole() // 获取所有账号和角色
     })
+    this.getAccountRoleDept() // 获取所有账号和角色和部门
   },
   methods: {
-    switchDept({ id }) {
+    switchDept({ id }) { // 切换部门
       console.log(id)
     },
-    pagination() {
+    pagination() { // 切换分页
       console.log(123)
     },
-    filterNode(value, data) {
+    filterNode(value, data) { // 部门 tree 根据关键词过滤规则
       if (!value) return true
       return data.label.indexOf(value) !== -1
     },
-    getAccountRole() { // 获取所有账户和角色
-      this.$request([api_getAcc(), api_getRole()], ([data1, data2]) => {
+    getAccountRoleDept() { // 获取所有账户和角色和部门
+      this.$request([api_getAcc({ dept: this.deptID, page: this.page.page, limit: this.page.limit }), api_getRole(), api_getDept()], ([data1, data2, date3]) => {
+        this.tree = date3
         this.list = data1.list
         this.roleList = data2.list
       })
@@ -153,35 +170,43 @@ export default {
       this.dialogType = 'add' // 弹出框类型为添加账号
       this.dialogVisible = true // 弹出框
     },
-    handleEditAccount({ userID, avatar, username, introduction, rolename }) { // 点击编辑账号
-      this.account = Object.assign({}, { userID, avatar, username, introduction, rolename }) // 将弹出框中的用户信息置为空
+    handleEditAccount(info) { // 点击编辑账号
+      this.account = Object.assign({}, info) // 将弹出框中的用户信息置为用户信息
       this.dialogType = 'edit' // 弹出框类型为编辑账号
       this.dialogVisible = true // 弹出框
     },
     confirmAccount() { // 点击提交添加/修改账号
-      if (!this.account.username) { this.$message.info({ message: '请设置名称' }); return }
-      if (this.dialogType === 'add' && !this.account.password) { this.$message.info({ message: '请设置密码' }); return }
-      if (!this.account.rolename) { this.$message.info({ message: '请设置角色' }); return }
-      if (this.account.avatar.length / 1024 > 1024) { this.$message.info({ message: '头像尺寸过大（base编码后大于 1M）' }); return }
-      if (this.dialogType === 'add') {
-        this.$request(api_addAcc(this.account), data => {
-          this.$notify.success({ title: '添加成功', message: '账号名: ' + this.account.username })
-          this.getAccountRole() // 添加成功后重新获取
-          this.dialogVisible = false // 收起弹出框
-        }, { endStillLoading: true })
-      } else {
-        this.$request(api_updateAcc(this.account), data => {
-          this.$notify.success({ title: '编辑成功', message: '账号名: ' + this.account.username })
-          this.getAccountRole() // 添加成功后重新获取
-          this.dialogVisible = false // 收起弹出框
-        }, { endStillLoading: true })
-      }
+      this.$refs['dialog-form'].validate(async valid => { // 表单验证
+        if (valid) {
+          this.__loading = this.$loading()
+          if (this.account.avatar.length / 1024 > 100) { // 如果图片过大
+            const { afterSrc } = await this.$compression(this.account.avatar, 100, 6) // 压缩头像
+            this.account.avatar = afterSrc
+            console.log(this.account.avatar)
+          }
+          this.$message.info('图片压缩完毕')
+          this.__loading.close()
+          if (this.dialogType === 'add') { // 如果是添加用户
+            this.$request(api_addAcc(this.account), data => {
+              this.$notify.success({ title: '添加成功', message: '用户名称: ' + this.account.username })
+              this.getAccountRoleDept() // 添加成功后重新获取
+              this.dialogVisible = false // 收起弹出框
+            }, { endStillLoading: true })
+          } else { // 如果是编辑用户
+            this.$request(api_updateAcc(this.account), data => {
+              this.$notify.success({ title: '编辑成功', message: '用户名称: ' + this.account.username })
+              this.getAccountRoleDept() // 添加成功后重新获取
+              this.dialogVisible = false // 收起弹出框
+            }, { endStillLoading: true })
+          }
+        }
+      })
     },
     handleDeleteAccount({ userID }) { // 点击删除
       this.$confirm('确定要删除当前账号？', '确定操作', { type: 'warning' }).then(() => {
         this.$request(api_delAcc({ userID }), data => {
           this.$message.success('删除成功')
-          this.getAccountRole() // 删除成功后重新获取下角色列表
+          this.getAccountRoleDept() // 删除成功后重新获取下角色列表
         }, { endStillLoading: true })
       }).catch(err => err)
     }
@@ -195,6 +220,9 @@ export default {
     @include flex();
     box-sizing: border-box;
     align-items: flex-start;
+    .el-avatar {
+      box-shadow: 0 0 8px #aaaaaa;
+    }
     .left {
       width: 222px;
       margin-right: 8px;

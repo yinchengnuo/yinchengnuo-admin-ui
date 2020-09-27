@@ -69,12 +69,11 @@ export default new Proxy({ // 一定定义全局对象 G。如果想要在 G 对
   },
 
   $compression(file, size = 20, device = 4) {
-    if (file[0]) {
+    if (file instanceof Array) { // 如果是数组遍历压缩
       return Promise.all(Array.from(file).map(e => this.$compression(e, size))) // 如果是 file 数组返回 Promise 数组
-    } else {
+    } else { // 单个文件压缩处理
       return new Promise((resolve) => {
-        const reader = new FileReader() // 创建 FileReader
-        reader.onload = ({ target: { result: src }}) => {
+        const fileLoaded = ({ target: { result: src }}) => { // 压缩方法，接受一个 base64 字符串
           const fileSize = Number((file.size / 1024).toFixed(2))
           if (fileSize <= size) {
             resolve({ file: file, origin: file, beforeSrc: src, afterSrc: src, beforeKB: fileSize + 'KB', afterKB: fileSize + 'KB', detail: [], quality: null })
@@ -124,7 +123,13 @@ export default new Proxy({ // 一定定义全局对象 G。如果想要在 G 对
             image.src = src
           }
         }
-        reader.readAsDataURL(file)
+        if (typeof file === 'string') { // 如果是 base64 字符串
+          fileLoaded({ target: { result: file }})
+        } else { // 如果是 file 对象
+          const reader = new FileReader()
+          reader.onload = fileLoaded
+          reader.readAsDataURL(file) // 将 file 处理为 base64
+        }
       })
     }
   },

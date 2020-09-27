@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
-    <el-input v-model="filterText" placeholder="输入部门名称进行过滤" maxlength="24" style="margin-bottom: 8px; width: 240px;" />
+    <el-input v-model="filterText" placeholder="输入部门名称进行过滤" maxlength="24" size="mini" style="margin-bottom: 8px; width: 240px;" />
+    <el-button type="primary" style="margin-bottom: 8px;" size="mini" @click="handleAddOrganization">添加组织</el-button>
     <div class="custom-table border">
       <header class="header bt bl">
         <div class="item br bb">部门</div>
@@ -41,14 +42,15 @@
         :ref="dialog.refName"
         :model="dialog.data"
         :rules="dialog.rules"
+        label-width="98px"
       >
-        <el-form-item label="部门名称" prop="label" label-width="98px">
+        <el-form-item label="部门名称" prop="label">
           <el-input v-model="dialog.data.label" placeholder="请输入部门名称" />
         </el-form-item>
-        <el-form-item label="部门负责人" prop="leader" label-width="98px">
+        <el-form-item label="部门负责人" prop="leader">
           <el-input v-model="dialog.data.leader" placeholder="请输入部门负责人" />
         </el-form-item>
-        <el-form-item label="联系方式" prop="phone" label-width="98px">
+        <el-form-item label="联系方式" prop="phone">
           <el-input v-model="dialog.data.phone" placeholder="请输入部门联系方式" maxlength="11" />
         </el-form-item>
       </el-form>
@@ -82,14 +84,14 @@ export default {
             Object.assign(this.data, edit)
           } else {
             this.title = `新增子部门（${node.data.label}）`
-            Object.assign(this.data, { label: '', status: '1', leader: '', phone: '' })
+            Object.assign(this.data, { label: '', leader: '', phone: '' })
           }
           this.visible = true
         },
         comfirm($refs, tree) {
           $refs[this.refName].validate(valid => {
             if (valid) {
-              if (this.title === '新增子部门') {
+              if (this.title.includes('新增子部门')) {
                 if (this.node.data.children) {
                   this.node.data.children.push({ ...this.data, id: Date.now() })
                 } else {
@@ -134,6 +136,9 @@ export default {
     this.getTree()
   },
   methods: {
+    handleAddOrganization() { // 新建组织
+
+    },
     filterNode(value, data) {
       if (!value) return true
       return data.label.indexOf(value) !== -1

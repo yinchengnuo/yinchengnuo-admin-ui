@@ -15,7 +15,7 @@
               <el-tree :data="generateRoutes(tree)" :props="{ children: 'children', label: item => item.meta ? item.meta.title : '' }" :default-expand-all="true" />
             </div>
             <div slot="reference" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor: pointer;">
-              <el-tag v-for="(value, index) in title" :key="index" style="margin: 2px;">{{ value }}</el-tag>
+              <el-tag v-for="(value, index) in title" :key="index" size="small" style="margin: 2px;">{{ value }}</el-tag>
             </div>
           </el-popover>
         </template>
@@ -36,21 +36,22 @@
               </div>
             </div>
             <div slot="reference" style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;cursor: pointer;">
-              <el-tag v-for="(user, index) in users" :key="index" style="margin: 2px;">{{ user.username }}</el-tag>
+              <el-tag v-for="(user, index) in users" :key="index" size="small" type="success" style="margin: 2px;">{{ user.username }}</el-tag>
             </div>
           </el-popover>
           <template v-else>暂无人员</template>
         </template>
       </el-table-column>
+      <el-table-column align="center" prop="createname" label="创建人" />
       <el-table-column align="center" width="234" label="操作">
         <template slot-scope="{ row }">
-          <el-button type="primary" size="small" @click="handleEditRole(row)">编辑角色权限</el-button>
-          <el-button type="danger" size="small" @click="handleDeleteRole(row)">删除角色</el-button>
+          <el-button type="primary" size="mini" @click="handleEditRole(row)">编辑角色权限</el-button>
+          <el-button type="danger" size="mini" @click="handleDeleteRole(row)">删除角色</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog :visible.sync="dialogVisible" :close-on-click-modal="false" :destroy-on-close="true" :title="dialogType === 'add' ? '添加角色' : '编辑角色'">
+    <el-dialog :visible.sync="dialogVisible" :destroy-on-close="true" :title="dialogType === 'add' ? '添加角色' : '编辑角色'">
       <el-form :model="role" label-width="80px" label-position="left">
         <el-form-item label="角色名">
           <el-input v-model="role.rolename" maxlength="12" placeholder="角色名" />
@@ -59,16 +60,17 @@
           <el-form-item label="页面权限">
             <el-tree
               ref="tree"
-              class="permission-tree"
-              :data="routes"
-              :props="{ children: 'children', label: 'title' }"
-              show-checkbox
               accordion
               :indent="48"
-              highlight-current
+              :data="routes"
+              show-checkbox
               node-key="path"
-              icon-class="el-icon-caret-right"
+              highlight-current
+              class="permission-tree"
+              :default-expanded-keys="[routes[0].path]"
               :render-content="renderContent"
+              icon-class="el-icon-caret-right"
+              :props="{ children: 'children', label: 'title' }"
               @node-click="({ buttons }) => buttonPermission = buttons"
             />
           </el-form-item>
@@ -100,7 +102,6 @@
 
 <script>
 import path from 'path'
-import axios from 'axios'
 import { deepClone } from '@/utils'
 import { api_getRole, api_addRole, api_delRole, api_updateRole } from '@/api/admin/role'
 
@@ -117,7 +118,6 @@ export default {
     }
   },
   mounted() {
-    axios.post('https://7ac0ddd0-32a2-4e95-90fb-304e8c832186.bspapp.com/http/logon/login?age=18', { test: 1 }).then(({ data }) => console.log(data))
     this.getRole(() => { // 传递函数进入等待渲染完毕如果从角色管理点击角色进入就触发响应权限点击显示预览权限树
       if (this.$route.params.rolename) {
         const index = this.list.findIndex(e => e.rolename === this.$route.params.rolename)

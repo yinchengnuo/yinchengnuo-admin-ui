@@ -45,7 +45,7 @@ Vue.directive('excel', { // 注册全局自定义快速读取 excel `v-excel`
   }
 })
 
-Vue.directive('img', { // 注册全局自定义快速读取 excel `v-img:9.formData` `v-img.base64`
+Vue.directive('img', { // 注册全局自定义快速读取图片 `v-img:9.formData` `v-img.base64`
   inserted: (el, { value, arg, modifiers: { formData, base64 }}) => {
     const max = isNaN(Number(arg)) ? 1 : Number(arg)
     const id = String(Date.now() + Math.floor(Math.random() * (10 ** 16)))

@@ -44,17 +44,20 @@ module.exports = [
       }
     }
   },
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   {
     url: '/admin/role/all', // 获取角色列表
     type: 'get',
     response: ({ query: { token }}) => {
-      const user = USER.find(e => e.username === decodeURIComponent(token)) // 根据 username 查询用户
-      const role = ROLE.find(e => e.roleID === user.roleID) // 根据 roleID 获取角色信息
+      const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取角色的用户
+      const role = ROLE.find(e => e.roleID === user.roleID) // 获取角色的角色
       return {
         code: 200,
         data: {
-          list: ROLE.filter(e => e.level > role.level).map(role => ({
+          list: ROLE.filter(e => e.parents.startsWith(`${role.parents},${role.roleID}`)).map(role => ({
             ...role,
+            createname: USER.find(e => e.userID === role.createID) ? USER.find(e => e.userID === role.createID).username : '',
             users: USER.filter(user => role.roleID === user.roleID)
           })) // 取出当前角色表中等级低于自身的角色
         }
@@ -68,14 +71,15 @@ module.exports = [
       if (ROLE.find(e => e.rolename === body.rolename)) {
         return { code: 402, message: '当前角色名称与已有角色名称重复' }
       } else {
-        const user = USER.find(e => e.username === decodeURIComponent(token)) // 根据 username 查询用户
-        const role = ROLE.find(e => e.roleID === user.roleID) // 根据 roleID 获取角色信息
+        const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取添加人信息
+        const role = ROLE.find(e => e.roleID === user.roleID) // 获取添加人角色
         ROLE.push({
-          level: role.level + 1,
           routes: body.routes,
-          roleID: Date.now().toString(),
+          createID: user.userID,
           rolename: body.rolename,
-          description: body.description
+          roleID: Date.now().toString(),
+          description: body.description,
+          parents: `${role.parents},${role.roleID}`
         })
         return { code: 200 }
       }
@@ -101,17 +105,22 @@ module.exports = [
       }
     }
   },
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   {
-    url: '/admin/user/all', // 获取角色列表
+    url: '/admin/user/all', // 获取用户列表
     type: 'get',
     response: ({ query: { token }}) => {
-      const user = USER.find(e => e.username === decodeURIComponent(token)) // 根据 username 查询用户
-      const role = ROLE.find(e => e.roleID === user.roleID) // 根据 roleID 获取角色信息
+      const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取查询用户信息
+      const role = ROLE.find(e => e.roleID === user.roleID) // 获取查询用户角色
       return {
         code: 200,
         data: {
-          list: USER.filter(user => ROLE.find(role => role.roleID === user.roleID).level > role.level).map(user => ({ // 取出当前用户表中等级低于自身的用户
+          list: USER.filter(user => {
+            return ROLE.find(role => role.roleID === user.roleID).parents.startsWith(`${role.parents},${role.roleID}`)
+          }).map(user => ({ // 取出当前用户表中等级低于自身的用户
             ...user,
+            createname: USER.find(e => e.userID === user.createID) ? USER.find(e => e.userID === user.createID).username : '',
             ...ROLE.find(role => role.roleID === user.roleID) // 同时带上用户角色信息
           }))
         }
@@ -122,16 +131,19 @@ module.exports = [
     url: '/admin/user/add', // 添加账号
     type: 'post',
     response: ({ query: { token }, body }) => {
+      const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取添加人信息
       if (USER.find(e => e.username === body.username)) {
         return { code: 402, message: '当前名称与已有账号名称重复' }
       } else {
         USER.push({
-          userID: Date.now().toString(), // 用户 id
-          roleID: ROLE.find(role => role.rolename === body.rolename).roleID, // 角色 id
+          createID: user.userID, // 创建人信息
+          deptID: body.deptID, // 部门 id
+          avatar: body.avatar, // 用户头像
+          roleID: body.roleID, // 用户角色 id
+          deptname: body.deptname, // 部门名称
           username: body.username, // 用户名
           password: body.password, // 用户密码
-          introduction: body.introduction, // 用户简介
-          avatar: body.avatar
+          userID: Date.now().toString() // 用户 id
         })
         return { code: 200 }
       }
@@ -146,7 +158,7 @@ module.exports = [
     }
   },
   {
-    url: '/admin/user/update', // 编辑角色
+    url: '/admin/user/update', // 编辑账号
     type: 'post',
     response: ({ body }) => {
       if (USER.find(e => e.userID === body.userID).username !== body.username && USER.find(e => e.username === body.username)) {
@@ -165,6 +177,8 @@ module.exports = [
       }
     }
   },
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   {
     url: '/admin/dept/tree', // 获取部门 tree
     type: 'get',
