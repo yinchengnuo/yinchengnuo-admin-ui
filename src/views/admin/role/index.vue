@@ -67,7 +67,6 @@
               node-key="path"
               highlight-current
               class="permission-tree"
-              :default-expanded-keys="[routes[0].path]"
               :render-content="renderContent"
               icon-class="el-icon-caret-right"
               :props="{ children: 'children', label: 'title' }"
