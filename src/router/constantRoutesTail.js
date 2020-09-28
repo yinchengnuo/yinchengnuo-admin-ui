@@ -30,7 +30,7 @@ export default [ // 公共路由列表尾部
     component: Layout,
     children: [
       {
-        path: 'https://git.dev.every-xx.com/zfcc/yinchengnuo-admin-ui',
+        path: 'https://github.com/yinchengnuo/yinchengnuo-admin-ui',
         meta: { title: '仓库地址', icon: 'link' }
       }
     ]
