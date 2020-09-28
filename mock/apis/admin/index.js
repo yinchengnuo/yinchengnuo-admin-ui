@@ -4,7 +4,7 @@ const dept = require('./data/dept')
 
 const USER = user
 const ROLE = role
-const DEPT = dept
+let DEPT = dept
 
 module.exports = [
   {
@@ -193,7 +193,7 @@ module.exports = [
     url: '/admin/dept/update', // 获取部门 tree
     type: 'post',
     response: ({ body }) => {
-      DEPT[0] = body.tree
+      DEPT = body.tree
       return { code: 200 }
     }
   }
