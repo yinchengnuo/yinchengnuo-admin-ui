@@ -4,9 +4,9 @@ import { api_login, api_logout, api_getInfo } from '@/api/logon'
 const state = {
   name: '', // 用户名
   role: '', // 用户角色
-  level: '', // 用户角色等级
+  todo: '', // 用户待办
+  dept: '', // 用户部门
   avatar: '', // 用户头像
-  introduction: '', // 用户简介
   token: getToken() // token
 }
 
@@ -17,17 +17,17 @@ const mutations = {
   SET_ROLE: (state, role) => { // 设置用户角色
     state.role = role
   },
-  SET_LEVEL: (state, level) => { // 设置用户角色等级
-    state.level = level
+  SET_DEPT: (state, dept) => { // 设置用户部门
+    state.dept = dept
+  },
+  SET_TODO: (state, todo) => { // 设置用户部门
+    state.todo = todo
   },
   SET_AVATAR: (state, avatar) => { // 设置用户头像
     state.avatar = avatar
   },
   SET_TOKEN: (state, token) => { // 设置 token
     state.token = token
-  },
-  SET_INTRODUCTION: (state, introduction) => { // 设置用户简介
-    state.introduction = introduction
   }
 }
 
@@ -43,12 +43,12 @@ const actions = {
   },
   getInfo({ commit }) { // 获取用户信息
     return new Promise((resolve, reject) => {
-      G.$request(api_getInfo(), ({ username, avatar, introduction, rolename, routes, level }) => {
-        commit('SET_LEVEL', level) // 设置用户角色等级
+      G.$request(api_getInfo(), ({ username, avatar, rolename, routes, deptname, todo }) => {
+        commit('SET_TODO', todo) // 设置用户待办
+        commit('SET_DEPT', deptname) // 设置用户部门
         commit('SET_NAME', username) // 设置用户名
         commit('SET_ROLE', rolename) // 设置用户角色
         commit('SET_AVATAR', avatar) // 设置用户头像
-        commit('SET_INTRODUCTION', introduction) // 设置用户简介
         resolve(routes) // 将路由表 resolve 给 store/permission/generateRoutes 处理路由
       }, { noLoading: true }).catch(error => reject(error))
     })

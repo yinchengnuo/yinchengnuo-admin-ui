@@ -51,6 +51,7 @@ Vue.directive('img', { // 注册全局自定义快速读取图片 `v-img:9.formD
     const id = String(Date.now() + Math.floor(Math.random() * (10 ** 16)))
     const input = document.createElement('input')
     el['excel-id'] = id
+    el.style.cursor = 'pointer'
     el['excel-event'] = () => document.getElementById(id).click()
     input.id = id
     input.type = 'file'

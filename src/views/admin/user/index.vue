@@ -53,7 +53,7 @@
             <div>点击头像选择</div>
           </div>
           <el-form-item label="用户名称" prop="username">
-            <el-input v-model.trim="account.username" maxlength="12" placeholder="请输入用户名称" />
+            <el-input v-model.trim="account.username" maxlength="16" placeholder="请输入用户名称" />
           </el-form-item>
           <el-form-item label="归属部门" prop="deptID">
             <treeselect

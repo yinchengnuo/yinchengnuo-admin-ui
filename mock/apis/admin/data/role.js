@@ -4,8 +4,8 @@ module.exports = [
     roleID: '0', // 角色ID
     parents: '', // 父级角色们
     createID: '', // 创建人 ID
-    rolename: 'root', // 角色名 （root 角色角色名不可更改，同时不会在前端出现）
-    description: '拥有最高权限' // 角色描述
+    rolename: 'root', // 角色名 （root 角色角色名不可更改！！！！！！，同时不会在前端出现）
+    description: '开发人员专用' // 角色描述
   },
   {
     roleID: '1',

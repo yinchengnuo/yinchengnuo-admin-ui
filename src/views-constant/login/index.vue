@@ -17,6 +17,7 @@
           name="Username"
           type="text"
           tabindex="1"
+          maxlength="16"
           autocomplete="on"
           @keyup.enter.native="handleLogin"
         />
@@ -35,6 +36,7 @@
             placeholder="密码"
             name="password"
             tabindex="2"
+            maxlength="16"
             autocomplete="on"
             @keyup.native="checkCapslock"
             @blur="capsTooltip = false"

@@ -44,6 +44,39 @@ module.exports = [
       }
     }
   },
+  {
+    url: '/logon/avatar', // 用户修改头像
+    type: 'post',
+    response: ({ query: { token }, body: { avatar }}) => {
+      const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取用户信息
+      user.avatar = avatar
+      return { code: 200 }
+    }
+  },
+  {
+    url: '/logon/psw', // 用户修改密码
+    type: 'post',
+    response: ({ query: { token }, body: { oldpsw, newpsw }}) => {
+      const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取用户信息
+      if (user.password === oldpsw) {
+        user.password = newpsw
+        return { code: 200 }
+      } else {
+        return {
+          code: 402,
+          message: '旧密码不正确'
+        }
+      }
+    }
+  },
+  {
+    url: '/logon/todo', // 用户修改待办事项
+    type: 'post',
+    response: ({ query: { token }, body: { todo }}) => {
+      USER.find(e => e.username === decodeURIComponent(token)).todo = todo
+      return { code: 200 }
+    }
+  },
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   {

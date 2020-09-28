@@ -2,7 +2,7 @@
   <div class="dashboard-editor-container">
     <div class=" clearfix">
       <pan-thumb :image="avatar" style="float: left">
-        你的角色:
+        <span>你的角色：</span>
         <span class="pan-info-roles">{{ role }}</span>
       </pan-thumb>
       <div class="info-container">
@@ -11,7 +11,7 @@
       </div>
     </div>
     <div>
-      <img :src="emptyGif" class="emptyGif">
+      <img src="@/assets/index/walk.gif" class="emptyGif">
     </div>
   </div>
 </template>
@@ -26,8 +26,7 @@ export default {
   components: { PanThumb },
   data() {
     return {
-      title,
-      emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3'
+      title
     }
   },
   computed: {
@@ -42,32 +41,31 @@ export default {
 
 <style lang="scss" scoped>
   .emptyGif {
-    display: block;
     width: 45%;
+    display: block;
     margin: 0 auto;
   }
 
   .dashboard-editor-container {
-    background-color: #e3e3e3;
-    height: calc(100vh - 84px);
     padding: 50px 60px 0px;
+    background-color: #e3e3e3;
     .pan-info-roles {
-      font-size: 12px;
-      font-weight: 700;
       color: #333;
       display: block;
+      font-size: 12px;
+      font-weight: 700;
     }
     .info-container {
+      height: 150px;
       position: relative;
       margin-left: 190px;
-      height: 150px;
       line-height: 200px;
       .display_name {
-        font-size: 48px;
-        line-height: 48px;
-        color: #212121;
-        position: absolute;
         top: 25px;
+        font-size: 48px;
+        color: #212121;
+        line-height: 48px;
+        position: absolute;
       }
     }
   }
