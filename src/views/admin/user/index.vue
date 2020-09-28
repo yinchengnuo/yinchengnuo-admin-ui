@@ -44,7 +44,7 @@
         </el-table-column>
       </el-table>
 
-      <Pagination :total="page.total" :limit="page.limit" @pagination="pagination" />
+      <Pagination :total="page.total" :page="page.page" :limit="page.limit" @pagination="pagination" />
 
       <el-dialog width="666px" :visible.sync="dialogVisible" :destroy-on-close="true" :title="dialogType === 'add' ? '添加账号' : '编辑账号'">
         <el-form ref="dialog-form" :model="account" label-width="88px" label-position="left" inline :rules="rules">
@@ -114,11 +114,11 @@ export default {
       roleList: [],
       dialogType: '',
       dialogVisible: false,
-      deptID: '1',
+      deptIDs: '',
       page: {
         page: 1,
         total: 0,
-        limit: 20
+        limit: 10
       },
       rules: {
         username: [
@@ -148,20 +148,42 @@ export default {
     this.getAccountRoleDept() // 获取所有账号和角色和部门
   },
   methods: {
-    switchDept({ id }) { // 切换部门
-      console.log(id)
+    switchDept(data) { // 切换部门
+      let ids = ''
+      const getID = children => {
+        children.forEach(child => {
+          if (child.children) {
+            getID(child.children)
+          } else {
+            ids += (ids ? `,${child.id}` : child.id)
+          }
+        })
+      }
+      getID([data])
+      this.deptIDs = ids
+      this.page.page = 1
+      this.getAccount()
     },
-    pagination() { // 切换分页
-      console.log(123)
+    pagination({ page, limit }) { // 切换分页
+      this.page.page = page
+      this.page.limit = limit
+      this.getAccount()
     },
     filterNode(value, data) { // 部门 tree 根据关键词过滤规则
       if (!value) return true
       return data.label.indexOf(value) !== -1
     },
+    getAccount() {
+      this.$request(api_getAcc({ dept: this.deptIDs, page: this.page.page, limit: this.page.limit }), data => {
+        this.list = data.list
+        this.page.total = data.total
+      })
+    },
     getAccountRoleDept() { // 获取所有账户和角色和部门
-      this.$request([api_getAcc({ dept: this.deptID, page: this.page.page, limit: this.page.limit }), api_getRole(), api_getDept()], ([data1, data2, date3]) => {
+      this.$request([api_getAcc({ dept: this.deptIDs, page: this.page.page, limit: this.page.limit }), api_getRole(), api_getDept()], ([data1, data2, date3]) => {
         this.tree = date3
         this.list = data1.list
+        this.page.total = data1.total
         this.roleList = data2.list
       })
     },
@@ -184,7 +206,6 @@ export default {
             this.account.avatar = afterSrc
             console.log(this.account.avatar)
           }
-          this.$message.info('图片压缩完毕')
           this.__loading.close()
           if (this.dialogType === 'add') { // 如果是添加用户
             this.$request(api_addAcc(this.account), data => {

@@ -110,19 +110,32 @@ module.exports = [
   {
     url: '/admin/user/all', // 获取用户列表
     type: 'get',
-    response: ({ query: { token }}) => {
+    response: ({ query: { token, dept, page, limit }}) => {
       const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取查询用户信息
       const role = ROLE.find(e => e.roleID === user.roleID) // 获取查询用户角色
+      let total = 0
       return {
         code: 200,
         data: {
-          list: USER.filter(user => {
+          list: USER.filter(user => { // 取出当前用户表中等级低于自身的用户
             return ROLE.find(role => role.roleID === user.roleID).parents.startsWith(`${role.parents},${role.roleID}`)
-          }).map(user => ({ // 取出当前用户表中等级低于自身的用户
-            ...user,
-            createname: USER.find(e => e.userID === user.createID) ? USER.find(e => e.userID === user.createID).username : '',
-            ...ROLE.find(role => role.roleID === user.roleID) // 同时带上用户角色信息
-          }))
+          }).filter(user => { // 取出指定部门的用户
+            if (dept) { // 如果带有部门 id
+              return dept.split(',').includes(user.deptID) // 返回部门 id 位于部门 id 中的
+            } else { // 否则就是首次请求
+              return true // 返回全部
+            }
+          }).map(e => { // 计算 total
+            total++
+            return e
+          }).slice(limit * (page - 1), limit * page).map(user => { // 分页
+            return {
+              ...user,
+              createname: USER.find(e => e.userID === user.createID) ? USER.find(e => e.userID === user.createID).username : '',
+              ...ROLE.find(role => role.roleID === user.roleID) // 同时带上用户角色信息
+            }
+          }),
+          total
         }
       }
     }
@@ -164,15 +177,7 @@ module.exports = [
       if (USER.find(e => e.userID === body.userID).username !== body.username && USER.find(e => e.username === body.username)) {
         return { code: 402, message: '当前账号名称名称与已有账号名称重复' }
       } else {
-        USER[USER.findIndex(e => e.userID === body.userID)] = {
-          ...USER[USER.findIndex(e => e.userID === body.userID)],
-          ...{
-            avatar: body.avatar,
-            username: body.username, // 用户名
-            introduction: body.introduction, // 用户简介
-            roleID: ROLE.find(role => role.rolename === body.rolename).roleID // 角色 id
-          }
-        }
+        USER[USER.findIndex(e => e.userID === body.userID)] = body
         return { code: 200 }
       }
     }

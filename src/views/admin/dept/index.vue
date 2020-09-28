@@ -47,10 +47,10 @@
         :validate-on-rule-change="false"
       >
         <el-form-item label="部门名称" prop="label">
-          <el-input v-model="dialog.data.label" placeholder="请输入部门名称" />
+          <el-input v-model="dialog.data.label" maxlength="12" placeholder="请输入部门名称" />
         </el-form-item>
         <el-form-item label="部门负责人" prop="leader">
-          <el-input v-model="dialog.data.leader" placeholder="请输入部门负责人" />
+          <el-input v-model="dialog.data.leader" maxlength="20" placeholder="请输入部门负责人" />
         </el-form-item>
         <el-form-item label="联系方式" prop="phone">
           <el-input v-model="dialog.data.phone" placeholder="请输入部门联系方式" maxlength="11" />
@@ -65,10 +65,10 @@
         :validate-on-rule-change="false"
       >
         <el-form-item label="组织名称" prop="label">
-          <el-input v-model="dialog.data.label" placeholder="请输入组织名称" />
+          <el-input v-model="dialog.data.label" maxlength="12" placeholder="请输入组织名称" />
         </el-form-item>
         <el-form-item label="组织负责人" prop="leader">
-          <el-input v-model="dialog.data.leader" placeholder="请输入组织负责人" />
+          <el-input v-model="dialog.data.leader" maxlength="20" placeholder="请输入组织负责人" />
         </el-form-item>
         <el-form-item label="联系方式" prop="phone">
           <el-input v-model="dialog.data.phone" placeholder="请输入组织联系方式" maxlength="11" />
@@ -129,7 +129,7 @@ export default {
                   G.$request(api_updateDept({ tree: this.node.store.root.data }))
                 }
               } else {
-                tree.push({ ...this.data, id: Date.now() })
+                tree.push({ id: Date.now(), label: this.data.label, leader: this.data.leader, phone: this.data.phone })
                 await G.$request(api_updateDept({ tree }))
               }
               this.visible = false
@@ -162,8 +162,7 @@ export default {
           ]
         }
       },
-      tree: [],
-      treeC: []
+      tree: []
     }
   },
   watch: {
@@ -181,7 +180,7 @@ export default {
     },
     getTree() {
       this.$request(api_getDept(), tree => {
-        this.tree = this.treeC = tree
+        this.tree = tree
       })
     },
     treeDrop() {
