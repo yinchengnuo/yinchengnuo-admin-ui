@@ -14,7 +14,9 @@
     "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml",
     "clear:svg": "node build/clearSvg.js",
     "test:unit": "jest --clearCache && vue-cli-service test:unit",
-    "test:ci": "npm run lint && npm run test:unit"
+    "test:ci": "npm run lint && npm run test:unit",
+    "push": "git add . && git commit -m 'publish' && git push origin master --force",
+    "start": "git pull origin master --force && npm i && npm run build"
   },
   "dependencies": {
     "@riophae/vue-treeselect": "^0.4.0",
