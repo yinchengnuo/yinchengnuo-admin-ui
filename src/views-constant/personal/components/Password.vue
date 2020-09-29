@@ -48,7 +48,7 @@ export default {
           if (this.form.new1 === this.form.new2) {
             this.$request(api_psw({
               oldpsw: this.form.old,
-              newpsw: this.form.new
+              newpsw: this.form.new1
             }), () => {
               this.form.old = this.form.new1 = this.form.new2 = ''
               this.$message.success('修改成功')
