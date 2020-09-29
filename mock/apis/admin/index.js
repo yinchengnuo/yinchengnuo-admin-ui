@@ -15,7 +15,7 @@ module.exports = [
       if (user && user.password === password) { // 用户存在且密码正确将 username 最为 token 返回
         return {
           code: 200,
-          data: encodeURIComponent(username)
+          data: user.userID
         }
       } else {
         return {
@@ -34,7 +34,8 @@ module.exports = [
     url: '/logon/info', // 获取用户信息
     type: 'get',
     response: ({ query: { token }}) => {
-      const user = USER.find(e => e.username === decodeURIComponent(token)) // 根据 username 查询用户
+      const user = USER.find(e => e.userID === token) // 根据 username 查询用户
+      delete user.password
       return {
         code: 200,
         data: {
@@ -48,7 +49,7 @@ module.exports = [
     url: '/logon/avatar', // 用户修改头像
     type: 'post',
     response: ({ query: { token }, body: { avatar }}) => {
-      const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取用户信息
+      const user = USER.find(e => e.userID === token) // 获取用户信息
       user.avatar = avatar
       return { code: 200 }
     }
@@ -57,7 +58,7 @@ module.exports = [
     url: '/logon/psw', // 用户修改密码
     type: 'post',
     response: ({ query: { token }, body: { oldpsw, newpsw }}) => {
-      const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取用户信息
+      const user = USER.find(e => e.userID === token) // 获取用户信息
       if (user.password === oldpsw) {
         user.password = newpsw
         return { code: 200 }
@@ -73,7 +74,7 @@ module.exports = [
     url: '/logon/todo', // 用户修改待办事项
     type: 'post',
     response: ({ query: { token }, body: { todo }}) => {
-      USER.find(e => e.username === decodeURIComponent(token)).todo = todo
+      USER.find(e => e.userID === token).todo = todo
       return { code: 200 }
     }
   },
@@ -83,7 +84,7 @@ module.exports = [
     url: '/admin/role/all', // 获取角色列表
     type: 'get',
     response: ({ query: { token }}) => {
-      const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取角色的用户
+      const user = USER.find(e => e.userID === token) // 获取角色的用户
       const role = ROLE.find(e => e.roleID === user.roleID) // 获取角色的角色
       return {
         code: 200,
@@ -104,7 +105,7 @@ module.exports = [
       if (ROLE.find(e => e.rolename === body.rolename)) {
         return { code: 402, message: '当前角色名称与已有角色名称重复' }
       } else {
-        const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取添加人信息
+        const user = USER.find(e => e.userID === token) // 获取添加人信息
         const role = ROLE.find(e => e.roleID === user.roleID) // 获取添加人角色
         ROLE.push({
           routes: body.routes,
@@ -144,7 +145,7 @@ module.exports = [
     url: '/admin/user/all', // 获取用户列表
     type: 'get',
     response: ({ query: { token, dept, page, limit }}) => {
-      const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取查询用户信息
+      const user = USER.find(e => e.userID === token) // 获取查询用户信息
       const role = ROLE.find(e => e.roleID === user.roleID) // 获取查询用户角色
       let total = 0
       return {
@@ -177,7 +178,7 @@ module.exports = [
     url: '/admin/user/add', // 添加账号
     type: 'post',
     response: ({ query: { token }, body }) => {
-      const user = USER.find(e => e.username === decodeURIComponent(token)) // 获取添加人信息
+      const user = USER.find(e => e.userID === token) // 获取添加人信息
       if (USER.find(e => e.username === body.username)) {
         return { code: 402, message: '当前名称与已有账号名称重复' }
       } else {
