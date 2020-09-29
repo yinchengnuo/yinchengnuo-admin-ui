@@ -18,7 +18,7 @@ const afterEach = to => { // 路由结束方法
   }
 }
 
-router.beforeEach(async(to, from, next) => { // 全路路由导航守卫
+router.beforeEach(async(to, from, next) => { // 全局路由导航守卫
   NProgress.start() // 进度条开始运动
   document.title = to.meta.title ? `${to.meta.title}-${title}` : `${title}` // 改变标题
   if (getToken()) { // 如果用户已登录

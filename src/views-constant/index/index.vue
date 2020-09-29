@@ -14,7 +14,7 @@
       </div>
       <el-card class="todo box-card">
         <div slot="header" class="clearfix">
-          <span style="font-weight: bold;">待办事项</span>
+          <span>待办事项</span>
           <el-button type="text" style="float: right; padding: 3px 0" @click="$router.push('personal')">编辑</el-button>
         </div>
         <div v-if="todo" v-html="todo" />
@@ -26,9 +26,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { showUI, title } from '@/settings'
 import adminDashboard from './admin'
 import editorDashboard from './editor'
+import { showUI, title } from '@/settings'
+import { api_upload } from '@/api/index'
 
 export default {
   name: 'Dashboard',
@@ -42,6 +43,13 @@ export default {
   },
   computed: {
     ...mapGetters(['name', 'todo', 'avatar'])
+  },
+  methods: {
+    get(files) {
+      this.$request(api_upload(files, 'website/'), data => {
+        console.log(data)
+      })
+    }
   }
 }
 </script>

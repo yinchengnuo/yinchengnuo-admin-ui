@@ -87,7 +87,7 @@ npm run dev
 
 ### 快速开始
 
-将 **/src/settings.js** 中 showUI 参数设置为 false 即可隐藏所有示例 UI 模板页面开始快速开发。或者你也可以在 **/src/router** 中移除响应路由。
+将 **/src/settings.js** 中 showUI 参数设置为 false 即可隐藏所有示例 UI 模板页面开始快速开发。或者你也可以在 **/src/router** 中移除相应路由。
 
 ---
 

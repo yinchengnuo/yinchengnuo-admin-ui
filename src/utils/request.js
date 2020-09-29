@@ -3,6 +3,7 @@ import { getToken } from '@/utils/auth'
 
 const mock = axios.create()
 const request = axios.create({ baseURL: process.env.VUE_APP_BASE_API })
+const uni = axios.create({ baseURL: 'https://dmhc-947ccf.service.tcloudbase.com' })
 
 const errored = error => { // 请求详情拦截错误处理
   console.log(error)
@@ -34,11 +35,13 @@ const interceptorsResponse = async response => { // 响应拦截器
   }
 }
 
+uni.interceptors.request.use(interceptorsRequest, error => errored(error))
+uni.interceptors.response.use(interceptorsResponse, error => errored(error))
 mock.interceptors.request.use(interceptorsRequest, error => errored(error))
 mock.interceptors.response.use(interceptorsResponse, error => errored(error))
 request.interceptors.request.use(interceptorsRequest, error => errored(error))
 request.interceptors.response.use(interceptorsResponse, error => errored(error))
 
-export { mock }
+export { mock, uni }
 
 export default request
