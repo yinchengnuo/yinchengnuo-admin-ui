@@ -38,7 +38,7 @@ const actions = {
         commit('SET_TOKEN', token) // 设置 token
         setToken(token) // 保存 token 至 cookie 浏览器关闭即清除
         resolve()
-      }, { noLoading: true }).catch(error => reject(error))
+      }, { endStillLoading: true }).catch(error => reject(error))
     })
   },
   getInfo({ commit }) { // 获取用户信息
@@ -60,7 +60,7 @@ const actions = {
         dispatch('resetToken') // 删除登录状态
         dispatch('tagsView/delAllViews', null, { root: true }) // 删除已经打开和缓存的 tabs
         resolve()
-      }, { noLoading: true }).catch(error => reject(error))
+      }).catch(error => reject(error))
     })
   },
   resetToken({ commit }) { // 删除登录状态。用在退出登录，或 request 拦截器 token 过期后，或 permission 挂载路由失败
