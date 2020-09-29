@@ -65,12 +65,12 @@ const actions = {
   },
   resetToken({ commit }) { // 删除登录状态。用在退出登录，或 request 拦截器 token 过期后，或 permission 挂载路由失败
     removeToken() // 删除 cookie 上的 token
-    commit('SET_TOKEN', '') // 删除 vuex 中的 token
-    commit('SET_LEVEL', '') // 删除用户角色等级
+    commit('SET_TODO', '') // 删除用户待办
+    commit('SET_DEPT', '') // 删除用户部门
     commit('SET_NAME', '') // 删除用户名
     commit('SET_ROLE', '') // 删除用户角色
+    commit('SET_TOKEN', '') // 删除 vuex 中的 token
     commit('SET_AVATAR', '') // 删除用户头像
-    commit('SET_INTRODUCTION', '') // 删除用户简介
   }
 }
 
