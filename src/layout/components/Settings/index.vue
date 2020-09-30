@@ -23,6 +23,11 @@
         <el-switch v-model="sidebarLogo" class="drawer-switch" />
       </div>
 
+      <div class="drawer-item">
+        <span>点击侧边导航刷新页面</span>
+        <el-switch v-model="sidebarRefresh" class="drawer-switch" />
+      </div>
+
     </div>
   </div>
 </template>
@@ -40,26 +45,32 @@ export default {
       get() {
         return this.$store.state.settings.fixedHeader
       },
-      set(val) {
-        this.$store.dispatch('settings/changeSetting', { key: 'fixedHeader', value: val })
+      set(value) {
+        this.$store.dispatch('settings/changeSetting', { key: 'fixedHeader', value })
       }
     },
     tagsView: {
       get() {
         return this.$store.state.settings.tagsView
       },
-      set(val) {
-        this.$store.dispatch('settings/changeSetting', { key: 'tagsView',
-          value: val
-        })
+      set(value) {
+        this.$store.dispatch('settings/changeSetting', { key: 'tagsView', value })
       }
     },
     sidebarLogo: {
       get() {
         return this.$store.state.settings.sidebarLogo
       },
-      set(val) {
-        this.$store.dispatch('settings/changeSetting', { key: 'sidebarLogo', value: val })
+      set(value) {
+        this.$store.dispatch('settings/changeSetting', { key: 'sidebarLogo', value })
+      }
+    },
+    sidebarRefresh: {
+      get() {
+        return this.$store.state.settings.sidebarRefresh
+      },
+      set(value) {
+        this.$store.dispatch('settings/changeSetting', { key: 'sidebarRefresh', value })
       }
     }
   },

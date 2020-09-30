@@ -91,7 +91,7 @@ export default {
       return path.resolve(this.basePath, routePath)
     },
     refresh(name) { // 点击侧边栏刷新页面
-      if (this.$route.name === name) {
+      if (this.$route.name === name && this.$store.state.settings.sidebarRefresh) {
         this.$router.replace({
           path: '/redirect' + this.$route.fullPath
         })
