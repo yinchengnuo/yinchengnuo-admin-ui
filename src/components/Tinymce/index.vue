@@ -101,7 +101,6 @@ export default {
   },
   methods: {
     init() {
-      // dynamic load tinymce from cdn
       load(tinymceCDN, (err) => {
         if (err) {
           this.$message.error(err.message)
@@ -113,18 +112,20 @@ export default {
     initTinymce() {
       const _this = this
       window.tinymce.init({
-        selector: `#${this.tinymceId}`,
-        language: this.languageTypeList['zh'],
-        height: this.height,
-        body_class: 'panel-body ',
-        object_resizing: false,
-        toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
-        // menubar: this.menubar,
-        plugins: plugins,
-        end_container_on_empty_block: true,
-        powerpaste_word_import: 'clean',
-        code_dialog_height: 450,
-        code_dialog_width: 1000,
+        selector: `#${this.tinymceId}`, // id
+        language: this.languageTypeList['zh'], // 中文
+        height: this.height, // 默认高度
+        body_class: 'panel-body ', // class
+        toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar, // 工具栏
+        branding: false, // 隐藏右下角技术支持
+        elementpath: false, // 隐藏底栏的元素路径
+        plugins: plugins, // 插件
+        autosave_restore_when_empty: false, // 浏览器崩溃自动保存本地
+        end_container_on_empty_block: true, // 是否在末尾添加空div
+        powerpaste_word_import: 'propmt', // 复制粘贴的文字样式处理 参数可以是propmt, merge, clean，效果自行切换对比
+        powerpaste_html_import: 'propmt', // 复制粘贴的html样式处理 propmt, merge, clean
+        powerpaste_allow_local_images: true, // 复制粘贴图书是否允许本地图片
+        paste_data_images: true, // 粘贴图片
         advlist_bullet_styles: 'square',
         advlist_number_styles: 'default',
         imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],

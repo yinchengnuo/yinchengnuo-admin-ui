@@ -16,6 +16,9 @@
               <el-tab-pane label="修改密码" name="修改密码">
                 <password />
               </el-tab-pane>
+              <el-tab-pane label="后台管理" name="后台管理">
+                <iframe id="website" :src="src" frameborder="0" />
+              </el-tab-pane>
               <!-- <el-tab-pane label="动态" name="动态">
                 <activity />
               </el-tab-pane>
@@ -46,7 +49,8 @@ export default {
   data() {
     return {
       user: {},
-      activeTab: '待办事项'
+      activeTab: '待办事项',
+      src: window.location.href
     }
   },
   computed: {
@@ -54,3 +58,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  #website {
+    width: 100%;
+    height: calc(100vh - 240px);
+  }
+</style>
