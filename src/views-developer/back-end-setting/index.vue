@@ -16,5 +16,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+  div {
+    line-height: 12;
+    font-size: 48px;
+    text-align: center;
+  }
 </style>
