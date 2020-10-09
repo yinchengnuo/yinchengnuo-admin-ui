@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">New</div>
+  <div class="app-container">后端设置</div>
 </template>
 
 <script>

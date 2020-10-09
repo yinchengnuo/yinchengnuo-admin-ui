@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import asyncRoutes from './asyncRoutes'
+import developerRoutes from './developerRoutes'
 import constantRoutesHead from './constantRoutesHead'
 import constantRoutesTail from './constantRoutesTail'
 
@@ -14,6 +15,7 @@ const clearUndefined = routes => { // 清除路由列表中值为 undefined 的�
 }
 
 clearUndefined(asyncRoutes)
+clearUndefined(developerRoutes)
 clearUndefined(constantRoutesHead)
 clearUndefined(constantRoutesTail)
 
@@ -30,6 +32,6 @@ export function resetRouter() {
   router.matcher = createRouter().matcher // 重置路由方法
 }
 
-export { asyncRoutes, constantRoutesHead, constantRoutesTail }
+export { asyncRoutes, developerRoutes, constantRoutesHead, constantRoutesTail }
 
 export default router

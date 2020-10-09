@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">New</div>
+  <div class="app-container">API测试</div>
 </template>
 
 <script>

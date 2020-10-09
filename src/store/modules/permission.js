@@ -1,5 +1,5 @@
 import { deepClone } from '@/utils'
-import { constantRoutesHead, asyncRoutes, constantRoutesTail } from '@/router'
+import { asyncRoutes, developerRoutes, constantRoutesHead, constantRoutesTail } from '@/router'
 
 const state = {
   routes: [], // 用户的所有路由
@@ -12,6 +12,11 @@ const mutations = {
     state.permissionRoutes = routes
     state.addRoutes = routes.concat(constantRoutesTail)
     state.routes = constantRoutesHead.concat(routes).concat(constantRoutesTail)
+  },
+  SET_ROOT_ROUTES: (state, routes) => {
+    state.permissionRoutes = routes
+    state.addRoutes = routes.concat(developerRoutes).concat(constantRoutesTail)
+    state.routes = constantRoutesHead.concat(routes).concat(developerRoutes).concat(constantRoutesTail)
   }
 }
 
@@ -29,7 +34,7 @@ const actions = {
           }
         })
         setButtons(routes)
-        commit('SET_ROUTES', routes)
+        commit('SET_ROOT_ROUTES', routes)
       } else {
         const reductionRoutes = (target, origin) => {
           origin.forEach(originItem => {
