@@ -6,7 +6,7 @@ import plugin from '@/plugin'
 import Cookies from 'js-cookie'
 import Element from 'element-ui'
 import PortalVue from 'portal-vue'
-import { errorLog } from '@/settings'
+import { mock, errorLog } from '@/settings'
 
 import '@/styles/index.scss'
 import 'nprogress/nprogress.css'
@@ -20,7 +20,7 @@ Vue.use(plugin) // 挂载全局指令/过滤器/原型方法
 Vue.use(PortalVue) // 挂载 PortalVue
 Vue.use(Element, { size: Cookies.get('size') || 'medium' }) // 挂载 ElementUI
 
-if (process.env.NODE_ENV === 'production') { // 本项目目前是纯前端项目
+if (mock && process.env.NODE_ENV === 'production') { // 本项目目前是纯前端项目
   require('../mock').mockXHR() // 生产环境也是用 mock 模拟数据
 }
 
