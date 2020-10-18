@@ -65,12 +65,18 @@ export default {
   mounted() {
     this.addTags()
     this.initTags()
-    this.sortable = Sortable.create(this.$refs.scrollPane.$el.querySelector('.el-scrollbar__wrap > .el-scrollbar__view'), {
+    this.sortable = Sortable.create(this.$refs.scrollPane.$el.getElementsByClassName('el-scrollbar__view')[0], {
       ghostClass: 'sortable-ghost', // Class name for the drop placeholder,
-      setData: function(dataTransfer) {
+      setData: dataTransfer => {
         dataTransfer.setData('Text', '')
         // to avoid Firefox bug
         // Detail see : https://github.com/RubaXa/Sortable/issues/1012
+      },
+      onEnd: e => {
+        this.$store.dispatch('tagsView/dragVisitedView', e)
+        this.$nextTick(() => {
+          this.$forceUpdate()
+        })
       }
     })
   },

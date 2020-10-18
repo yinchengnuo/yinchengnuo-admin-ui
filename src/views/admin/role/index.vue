@@ -152,7 +152,7 @@ export default {
           role.title = JSON.stringify(role.routes).match(/(?<=title":").+?(?=")/g)
         })
         this.list = list
-        console.log(list)
+        // console.log(list)
         popover && popover()
       })
     },
