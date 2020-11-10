@@ -63,6 +63,14 @@ const mutations = {
         break
       }
     }
+  },
+  DRAG_VISITED_VIEW(state, { newIndex, oldIndex }) {
+    const newItem = state.visitedViews[oldIndex]
+    const oldItem = state.visitedViews[newIndex]
+    state.visitedViews[newIndex] = newItem
+    state.visitedViews[oldIndex] = oldItem
+    console.log(newIndex, oldIndex)
+    console.log(state.visitedViews)
   }
 }
 
@@ -149,6 +157,9 @@ const actions = {
 
   updateVisitedView({ commit }, view) {
     commit('UPDATE_VISITED_VIEW', view)
+  },
+  dragVisitedView({ commit }, { newIndex, oldIndex }) {
+    commit('DRAG_VISITED_VIEW', { newIndex, oldIndex })
   }
 }
 
