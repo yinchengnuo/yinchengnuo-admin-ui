@@ -56,18 +56,6 @@ export default new Proxy({ // 一定定义全局对象 G。如果想要在 G 对
     })
   },
 
-  $excel(list, name) {
-    !list.length ? list = [{ '暂无数据': '' }] : ''
-    import('@/vendor/Export2Excel').then(excel => {
-      excel.export_json_to_excel({
-        header: Object.keys(list[0]),
-        data: list.map(listItem => Object.keys(list[0]).map(j => listItem[j])),
-        filename: name || '下载Excel',
-        bookType: 'xlsx'
-      })
-    })
-  },
-
   $compression(file, size = 20, device = 4) {
     if (file instanceof Array) { // 如果是数组遍历压缩
       return Promise.all(Array.from(file).map(e => this.$compression(e, size))) // 如果是 file 数组返回 Promise 数组
@@ -136,6 +124,7 @@ export default new Proxy({ // 一定定义全局对象 G。如果想要在 G 对
 
   $download(download, name) {
     if (download instanceof Array) {
+      !download.length ? download = [{ '暂无数据': '' }] : ''
       import('@/vendor/Export2Excel').then(excel => {
         excel.export_json_to_excel({
           header: Object.keys(download[0]),
@@ -205,7 +194,24 @@ export default new Proxy({ // 一定定义全局对象 G。如果想要在 G 对
       }
     }
     animateScroll()
+  },
+
+  $base64ToFile(dataurl, filename = Date.now()) { // base64 转 文件
+    try {
+      const arr = dataurl.split(',')
+      const mime = arr[0].match(/:(.*?);/)[1]
+      const bstr = atob(arr[1])
+      let n = bstr.length
+      const u8arr = new Uint8Array(n)
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+      }
+      return new File([u8arr], filename, { type: mime })
+    } catch (e) {
+      throw new Error('base64不合法')
+    }
   }
+
 }, {
   get(target, key) {
     if (ElementFuns.find(e => e === key)) {
